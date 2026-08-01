@@ -1,0 +1,10 @@
+BasedOnStyle: LLVM
+
+IndentWidth: 4
+
+NamespaceIndentation: None
+FixNamespaceComments: true
+
+Standard: Latest
+
+PointerAlignment: Left
