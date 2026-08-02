@@ -2,6 +2,7 @@ add_library(math_engine STATIC)
 
 target_sources(math_engine PUBLIC 
     FILE_SET CXX_MODULES FILES
+        constants.cppm
         linear_algebra.cppm
         path_tracing_objects.cppm
 )

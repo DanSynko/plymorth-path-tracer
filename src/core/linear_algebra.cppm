@@ -3,9 +3,12 @@ export module linear_algebra;
 #ifdef __INTELLISENSE__
 #include <vector>
 #include <cmath>
+#include <numbers>
 #else
 import std;
 #endif
+
+import constants;
 
 export namespace plymorth {
 struct Vec3 {
@@ -29,9 +32,7 @@ struct Vec3 {
         return *this;
     }
 
-    float x = 0.0f;
-    float y = 0.0f; 
-    float z = 0.0f;
+    float x, y, z = 0.0f;
 };
 Vec3 operator+(Vec3 lhs, Vec3 rhs) {
     lhs += rhs;
@@ -40,6 +41,22 @@ Vec3 operator+(Vec3 lhs, Vec3 rhs) {
 Vec3 operator-(Vec3 lhs, Vec3 rhs) {
     lhs -= rhs;
     return lhs;
+}
+
+[[nodiscard]] std::pair<float, float> raster_to_camera(int x, int y) noexcept {
+    float x_normalized_device_coordinates = (x + 0.5) / screen_width;
+    float y_normalized_device_coordinates = (y + 0.5) / screen_height;
+
+    float x_screen_space = 2 * x_normalized_device_coordinates - 1;
+    float y_screen_space = 1 - 2 * y_normalized_device_coordinates;
+
+    float grad_to_rad = FOV * (std::numbers::pi / 180);
+    float FOV_scale_factor = std::tan(grad_to_rad / 2);
+
+    float x_cam = x_screen_space * aspect_ratio * FOV_scale_factor;
+    float y_cam = y_screen_space * FOV_scale_factor;
+
+    return {x_cam, y_cam};
 }
 
 float dot_product(Vec3 first, Vec3 second) noexcept {
