@@ -9,29 +9,9 @@
 import std;
 #endif
 
+import constants;
 import linear_algebra;
 import path_tracing_objects;
-
-constexpr float screen_width = 300.0f;
-constexpr float screen_height = 200.0f;
-constexpr float aspect_ratio = screen_width / screen_height;
-constexpr int FOV = 75;
-
-[[nodiscard]] std::pair<float, float> raster_to_camera(int x, int y) noexcept {
-	float x_normalized_device_coordinates = (x + 0.5) / screen_width;
-    float y_normalized_device_coordinates = (y + 0.5) / screen_height;
-
-    float x_screen_space = 2 * x_normalized_device_coordinates - 1;
-    float y_screen_space = 1 - 2 * y_normalized_device_coordinates;
-
-    float grad_to_rad = FOV * (std::numbers::pi / 180);
-    float FOV_scale_factor = std::tan(grad_to_rad / 2);
-
-    float x_cam = x_screen_space * aspect_ratio * FOV_scale_factor;
-    float y_cam = y_screen_space * FOV_scale_factor;
-
-    return {x_cam, y_cam};
-}
 
 int main() {
 	std::println("Hello, world!");
@@ -43,7 +23,7 @@ int main() {
 
 	for (int x = 0; x < screen_width; ++x) {
         for (int y = 0; y < screen_height; ++y) {
-            auto [x_cam, y_cam] = raster_to_camera(x, y);
+            auto [x_cam, y_cam] = plymorth::raster_to_camera(x, y);
 
             plymorth::Ray primary_ray = {
 				camera, 
