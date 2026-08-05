@@ -21,11 +21,17 @@ struct Color {
 
 struct Sphere {
     Color color = {255.0f, 0.0f, 0.0f};
-    Vec3 center = { 0.0f, 0.0f, -5.0f };
+    Vec3 center = {0.0f, 0.0f, -5.0f};
     float radius = 1.0f;
 };
 
-[[nodiscard]] Color hit_sphere(Sphere sphere, Ray current_ray) noexcept {
+struct Plane {
+    Color color = {0.0f, 255.0f, 0.0f};
+    Vec3 normal = {0.0f, 1.0f, 0.0f};
+    float d = 25.0f;
+};
+
+[[nodiscard]] bool hit_sphere(Sphere sphere, Ray current_ray) noexcept {
     float a = dot_product(current_ray.direction, current_ray.direction);
 
     Vec3 V = current_ray.origin - sphere.center; 
@@ -37,7 +43,7 @@ struct Sphere {
     float discriminant = (std::powf(b, 2)) - 4 * a * c;
 
     if (discriminant < 0) {
-        return Color{ 0.0f, 0.0f, 255.0f };
+        return false;
     }
 
     float first_root = (-b - std::sqrt(discriminant)) / 2;
@@ -51,10 +57,27 @@ struct Sphere {
     if (nearest_root < t_min || nearest_root > t_max) {
         nearest_root = second_root;
         if (nearest_root < t_min || nearest_root > t_max) {
-            return Color{0.0f, 0.0f, 255.0f};
+            return false;
         }
     }
 
-    return sphere.color;
+    return true;
+}
+
+[[nodiscard]] bool hit_plane(Plane plane, Ray current_ray) noexcept {
+    float origin_to_point_distance = -(dot_product(plane.normal, current_ray.origin) + plane.d);
+    float ray_incidence_angle = dot_product(current_ray.direction, plane.normal);
+
+    if (ray_incidence_angle == 0) {
+        return false;
+    }
+
+    float t = origin_to_point_distance / ray_incidence_angle;
+
+    if (t < 0) {
+        return false;
+    }
+
+    return true;
 }
 } // namespace plymorth
