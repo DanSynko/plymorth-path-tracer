@@ -31,6 +31,26 @@ struct Plane {
     float d = 25.0f;
 };
 
+struct Emission {
+    float r_intensity = 1.0f;
+    float g_intensity = 1.0f;
+    float b_intensity = 1.0f;
+};
+
+struct LightSource {
+    Sphere shape{
+        {255.0f, 255.0f, 255.0f},
+        {-2.7f, 1.5f, -4.0f},
+        1.0f
+    };
+    Emission emission{};
+    Color emission_color{
+        shape.color.r * emission.r_intensity, 
+        shape.color.g * emission.g_intensity, 
+        shape.color.b * emission.b_intensity
+    };
+};
+
 [[nodiscard]] bool hit_sphere(Sphere sphere, Ray current_ray) noexcept {
     float a = dot_product(current_ray.direction, current_ray.direction);
 
@@ -79,5 +99,9 @@ struct Plane {
     }
 
     return true;
+}
+
+[[nodiscard]] bool hit_light_source(LightSource light_source, Ray current_ray) noexcept {
+    return hit_sphere(light_source.shape, current_ray);
 }
 } // namespace plymorth
