@@ -38,20 +38,29 @@ struct Emission {
     float b_intensity = 1.0f;
 };
 
-using Shape = std::variant<Sphere>;
+template<typename T>
+concept ShapeType = std::same_as<T, Sphere>;
 
+template <ShapeType T>
 struct LightSource {
-    Shape shape = Sphere{
-        {255.0f, 255.0f, 255.0f}, 
-        {-2.7f, 1.5f, -4.0f}, 
-        1.0f
-    };
+    LightSource() {
+        if constexpr (std::same_as<T, Sphere>) {
+            shape = Sphere{
+                {255.0f, 255.0f, 255.0f}, 
+                {-2.7f, 1.5f, -4.0f}, 
+                1.0f
+            };
+            emission_color = Color{
+                shape.color.r * emission.r_intensity,
+                shape.color.g * emission.g_intensity,
+                shape.color.b * emission.b_intensity
+            };
+        }
+    }
+
+    T shape;
     Emission emission{};
-    Color emission_color{
-        std::get<Sphere>(shape).color.r * emission.r_intensity, 
-        std::get<Sphere>(shape).color.g * emission.g_intensity, 
-        std::get<Sphere>(shape).color.b * emission.b_intensity
-    };
+    Color emission_color;
 };
 
 [[nodiscard]] bool hit_sphere(Sphere sphere, Ray current_ray) noexcept {
@@ -104,16 +113,13 @@ struct LightSource {
     return true;
 }
 
-[[nodiscard]] bool hit_light_source(LightSource light_source, Ray current_ray) noexcept {
-    return std::visit([&](const auto& shape) {
-        using CurrentShape = std::decay_t<decltype(shape)>;
+template<ShapeType T>
+[[nodiscard]] bool hit_light_source(LightSource<T> light_source, Ray current_ray) noexcept {
+    if constexpr (std::same_as<T, Sphere>) {
+        return hit_sphere(light_source.shape, current_ray);
+    }
 
-        if constexpr (std::same_as<CurrentShape, Sphere>) {
-            return hit_sphere(shape, current_ray);
-        }
-
-        return false;
-    },
-    light_source.shape);
+    return false;
 }
+
 } // namespace plymorth

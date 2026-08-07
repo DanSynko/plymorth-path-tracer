@@ -21,7 +21,7 @@ int main() {
 	plymorth::Vec3 camera{};
 	plymorth::Sphere sphere{};
     plymorth::Plane plane{};
-    plymorth::LightSource light_source{};
+    plymorth::LightSource<plymorth::Sphere> light_source{};
 
 	for (int x = 0; x < screen_width; ++x) {
         for (int y = 0; y < screen_height; ++y) {
