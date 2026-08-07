@@ -3,6 +3,7 @@ export module path_tracing_objects;
 #ifdef __INTELLISENSE__
 #include <vector>
 #include <cmath>
+#include <variant>
 #else
 import std;
 #endif
@@ -29,6 +30,37 @@ struct Plane {
     Color color = {0.0f, 255.0f, 0.0f};
     Vec3 normal = {0.0f, 1.0f, 0.0f};
     float d = 25.0f;
+};
+
+struct Emission {
+    float r_intensity = 1.0f;
+    float g_intensity = 1.0f;
+    float b_intensity = 1.0f;
+};
+
+template<typename T>
+concept ShapeType = std::same_as<T, Sphere>;
+
+template <ShapeType T>
+struct LightSource {
+    LightSource() {
+        if constexpr (std::same_as<T, Sphere>) {
+            shape = Sphere{
+                {255.0f, 255.0f, 255.0f}, 
+                {-2.7f, 1.5f, -4.0f}, 
+                1.0f
+            };
+            emission_color = Color{
+                shape.color.r * emission.r_intensity,
+                shape.color.g * emission.g_intensity,
+                shape.color.b * emission.b_intensity
+            };
+        }
+    }
+
+    T shape;
+    Emission emission{};
+    Color emission_color;
 };
 
 [[nodiscard]] bool hit_sphere(Sphere sphere, Ray current_ray) noexcept {
@@ -80,4 +112,14 @@ struct Plane {
 
     return true;
 }
+
+template<ShapeType T>
+[[nodiscard]] bool hit_light_source(LightSource<T> light_source, Ray current_ray) noexcept {
+    if constexpr (std::same_as<T, Sphere>) {
+        return hit_sphere(light_source.shape, current_ray);
+    }
+
+    return false;
+}
+
 } // namespace plymorth

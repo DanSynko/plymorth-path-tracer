@@ -21,6 +21,7 @@ int main() {
 	plymorth::Vec3 camera{};
 	plymorth::Sphere sphere{};
     plymorth::Plane plane{};
+    plymorth::LightSource<plymorth::Sphere> light_source{};
 
 	for (int x = 0; x < screen_width; ++x) {
         for (int y = 0; y < screen_height; ++y) {
@@ -35,12 +36,18 @@ int main() {
             bool hit = plymorth::hit_sphere(sphere, primary_ray);
 			if (hit) {
 	            frame_buffer[y * screen_width + x] = sphere.color;
-                            continue;
+                continue;
 			}
 
             hit = plymorth::hit_plane(plane, primary_ray);
             if (hit) {
                 frame_buffer[y * screen_width + x] = plane.color;
+                continue;
+            }
+
+            hit = plymorth::hit_light_source(light_source, primary_ray);
+            if (hit) {
+                frame_buffer[y * screen_width + x] = light_source.emission_color;
             }
 		}
 	}

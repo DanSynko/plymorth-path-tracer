@@ -8,3 +8,7 @@ FixNamespaceComments: true
 Standard: Latest
 
 PointerAlignment: Left
+
+BreakConstructorInitializers: BeforeComma
+PackConstructorInitializers: Never
+ConstructorInitializerIndentWidth: 4
