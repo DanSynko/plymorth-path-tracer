@@ -3,6 +3,7 @@ export module path_tracing_objects;
 #ifdef __INTELLISENSE__
 #include <vector>
 #include <cmath>
+#include <variant>
 #else
 import std;
 #endif
@@ -37,17 +38,19 @@ struct Emission {
     float b_intensity = 1.0f;
 };
 
+using Shape = std::variant<Sphere>;
+
 struct LightSource {
-    Sphere shape{
-        {255.0f, 255.0f, 255.0f},
-        {-2.7f, 1.5f, -4.0f},
+    Shape shape = Sphere{
+        {255.0f, 255.0f, 255.0f}, 
+        {-2.7f, 1.5f, -4.0f}, 
         1.0f
     };
     Emission emission{};
     Color emission_color{
-        shape.color.r * emission.r_intensity, 
-        shape.color.g * emission.g_intensity, 
-        shape.color.b * emission.b_intensity
+        std::get<Sphere>(shape).color.r * emission.r_intensity, 
+        std::get<Sphere>(shape).color.g * emission.g_intensity, 
+        std::get<Sphere>(shape).color.b * emission.b_intensity
     };
 };
 
@@ -102,6 +105,15 @@ struct LightSource {
 }
 
 [[nodiscard]] bool hit_light_source(LightSource light_source, Ray current_ray) noexcept {
-    return hit_sphere(light_source.shape, current_ray);
+    return std::visit([&](const auto& shape) {
+        using CurrentShape = std::decay_t<decltype(shape)>;
+
+        if constexpr (std::same_as<CurrentShape, Sphere>) {
+            return hit_sphere(shape, current_ray);
+        }
+
+        return false;
+    },
+    light_source.shape);
 }
 } // namespace plymorth
