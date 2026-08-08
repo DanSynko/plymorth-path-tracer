@@ -19,7 +19,17 @@ int main() {
     std::vector<plymorth::Color> frame_buffer(screen_width * screen_height);
 
 	plymorth::Vec3 camera{};
-	plymorth::Sphere sphere{};
+
+    plymorth::Sphere sphere_left{};
+    sphere_left.color = {0.0f, 130.0f, 0.0f};
+    sphere_left.center = {-3.0f, 0.0f, -5.0f};
+
+	plymorth::Sphere sphere_center{};
+    sphere_center.color = {255.0f, 165.0f, 0.0f};
+
+    plymorth::Sphere sphere_right{};
+    sphere_right.center = {3.0f, 0.0f, -5.0f};
+
     plymorth::Plane plane{};
     plymorth::LightSource<plymorth::Sphere> light_source{};
 
@@ -33,11 +43,23 @@ int main() {
 			};
             primary_ray.direction = plymorth::normalize(primary_ray.direction);
 
-            bool hit = plymorth::hit_sphere(sphere, primary_ray);
+            bool hit = plymorth::hit_sphere(sphere_left, primary_ray);
 			if (hit) {
-	            frame_buffer[y * screen_width + x] = sphere.color;
+                frame_buffer[y * screen_width + x] = sphere_left.color;
                 continue;
 			}
+            
+            hit = plymorth::hit_sphere(sphere_center, primary_ray);
+            if (hit) {
+                frame_buffer[y * screen_width + x] = sphere_center.color;
+                continue;
+            }
+
+            hit = plymorth::hit_sphere(sphere_right, primary_ray);
+            if (hit) {
+                frame_buffer[y * screen_width + x] = sphere_right.color;
+                continue;
+            }
 
             hit = plymorth::hit_plane(plane, primary_ray);
             if (hit) {
