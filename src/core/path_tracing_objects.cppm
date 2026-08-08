@@ -22,8 +22,8 @@ struct Color {
 
 struct Sphere {
     Color color = {255.0f, 0.0f, 0.0f};
-    Vec3 center = {0.0f, 0.0f, -5.0f};
-    float radius = 1.0f;
+    Vec3 center = {0.0f, 0.0f, -15.0f};
+    float radius = 0.9f;
 };
 
 struct Plane {
@@ -47,7 +47,7 @@ struct LightSource {
         if constexpr (std::same_as<T, Sphere>) {
             shape = Sphere{
                 {255.0f, 255.0f, 255.0f}, 
-                {-2.7f, 1.5f, -4.0f}, 
+                {-4.0f, 3.5f, -14.0f}, 
                 1.0f
             };
             emission_color = Color{

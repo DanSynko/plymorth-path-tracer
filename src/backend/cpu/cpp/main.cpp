@@ -22,13 +22,13 @@ int main() {
 
     plymorth::Sphere sphere_left{};
     sphere_left.color = {0.0f, 130.0f, 0.0f};
-    sphere_left.center = {-3.0f, 0.0f, -5.0f};
+    sphere_left.center = {-3.5f, 0.0f, -15.0f};
 
 	plymorth::Sphere sphere_center{};
     sphere_center.color = {255.0f, 165.0f, 0.0f};
 
     plymorth::Sphere sphere_right{};
-    sphere_right.center = {3.0f, 0.0f, -5.0f};
+    sphere_right.center = {3.5f, 0.0f, -15.0f};
 
     plymorth::Plane plane{};
     plymorth::LightSource<plymorth::Sphere> light_source{};
